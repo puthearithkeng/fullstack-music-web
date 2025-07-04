@@ -2,7 +2,8 @@ import './Allstyle.css';
 import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
 
-export default function Navbar() {
+// Navbar component now accepts isAuthenticated, currentUser, and onSignOut as props
+export default function Navbar({ isAuthenticated, currentUser, onSignOut }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -34,7 +35,7 @@ export default function Navbar() {
           )}
         </button>
 
-        {/* Navigation Links, Favorite, and Login */}
+        {/* Navigation Links, Favorite, and Auth Buttons */}
         <ul className={`md:flex md:space-x-6 items-center ${open ? 'block mt-4 md:mt-0 w-full md:w-auto text-center' : 'hidden'} md:block`}>
           <li>
             <NavLink
@@ -72,7 +73,7 @@ export default function Navbar() {
               Artist
             </NavLink>
           </li>
-          {/* New Favorite Link */}
+          {/* Favorite Link */}
           <li>
             <NavLink
               to="/favorite"
@@ -85,15 +86,45 @@ export default function Navbar() {
               Favorite
             </NavLink>
           </li>
-          {/* Login Button with improved design */}
-          <li className="mt-4 md:mt-0">
-            <Link
-              to="/login"
-              className="inline-block bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
-            >
-              Login
-            </Link>
-          </li>
+          {/* Conditional rendering for Login/Signup or User Info/Logout */}
+          {isAuthenticated ? (
+            <>
+              <li className="mt-4 md:mt-0">
+                <span className="block py-2 px-3 text-gray-300 md:inline-block">
+                  Hello, {currentUser?.email ? currentUser.email.split('@')[0] : currentUser?.uid?.substring(0, 8)}!
+                </span>
+              </li>
+              <li className="mt-2 md:mt-0">
+                <button
+                  onClick={onSignOut}
+                  className="inline-block bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 text-white font-bold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              {/* Login Button */}
+              <li className="mt-4 md:mt-0">
+                <Link
+                  to="/login"
+                  className="inline-block bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
+                >
+                  Login
+                </Link>
+              </li>
+              {/* Signup Button */}
+              <li className="mt-2 md:mt-0">
+                <Link
+                  to="/signup"
+                  className="inline-block bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
+                >
+                  Sign Up
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>

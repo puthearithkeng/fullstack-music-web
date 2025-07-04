@@ -1,63 +1,15 @@
 import './Allstyle.css'
 import React, { useEffect, useState } from 'react';
-
-// Dummy data for a specific artist (default artist to show initially for profile view)
-const defaultArtistData = {
-    id: 1,
-    name: "Aurora Bloom",
-    genre: "Electronic, Ambient",
-    bio: "Aurora Bloom crafts immersive soundscapes and evocative melodies that transport listeners to ethereal realms. Known for their intricate compositions and atmospheric textures, Aurora Bloom has quickly risen as a prominent figure in the ambient and electronic music scene, creating music that resonates deeply with the soul.",
-    coverImage: "https://placehold.co/1200x400/333333/FFFFFF?text=Aurora+Bloom+Banner", // Banner image for the artist page
-    profileImage: "https://placehold.co/200x200/1a1a1a/e0e0e0?text=Artist+Profile", // Profile image
-};
-
-// Dummy data for popular tracks by the default artist (serving as "all tracks" for this demo)
-// Added albumId to link tracks to albums
-const allArtistTracks = [
-    { id: 201, title: "Echoes in the Void", artist: "Aurora Bloom", albumId: 1, albumArt: "https://placehold.co/300x300/1a1a1a/e0e0e0?text=Track+A1", releaseDate: "2023-01-15" },
-    { id: 202, title: "Lunar Whispers", artist: "Aurora Bloom", albumId: 1, albumArt: "https://placehold.co/300x300/2a2a2a/e0e0e0?text=Track+A2", releaseDate: "2023-03-20" },
-    { id: 203, title: "Solar Flares", artist: "Aurora Bloom", albumId: 1, albumArt: "https://placehold.co/300x300/3a3a3a/e0e0e0?text=Track+A3", releaseDate: "2023-05-10" },
-    { id: 204, title: "Galactic Drift", artist: "Aurora Bloom", albumId: 9, albumArt: "https://placehold.co/300x300/4a4a4a/e0e0e0?text=Track+A4", releaseDate: "2023-08-01" },
-    { id: 205, title: "Stardust Trails", artist: "Aurora Bloom", albumId: 9, albumArt: "https://placehold.co/300x300/5a5a5a/e0e0e0?text=Track+A5", releaseDate: "2023-10-25" },
-    { id: 206, title: "Cosmic Bloom", artist: "Aurora Bloom", albumId: 10, albumArt: "https://placehold.co/300x300/6a6a6a/e0e0e0?text=Track+A6", releaseDate: "2024-01-05" },
-    { id: 207, title: "Nebula Dreams", artist: "Aurora Bloom", albumId: 10, albumArt: "https://placehold.co/300x300/7a7a7a/e0e0e0?text=Track+A7", releaseDate: "2024-02-14" },
-    { id: 208, title: "Quantum Realm", artist: "Aurora Bloom", albumId: 11, albumArt: "https://placehold.co/300x300/8a8a8a/e0e0e0?text=Track+A8", releaseDate: "2024-03-30" },
-    { id: 209, title: "Aurora's Embrace", artist: "Aurora Bloom", albumId: 11, albumArt: "https://placehold.co/300x300/9a9a9a/e0e0e0?text=Track+A9", releaseDate: "2024-04-18" },
-];
-
-// Dummy data for albums by the default artist
-const artistAlbums = [
-    { id: 1, title: "Echoes of Eternity", artist: "Aurora Bloom", albumArt: "https://placehold.co/300x300/1a1a1a/e0e0e0?text=Album+1", releaseDate: "2023-01-15" },
-    { id: 9, title: "Celestial Harmonies", artist: "Aurora Bloom", albumArt: "https://placehold.co/300x300/7b7b7b/e0e0e0?text=Album+A7", releaseDate: "2024-03-10" },
-    { id: 10, title: "Dream Weavers", artist: "Aurora Bloom", albumArt: "https://placehold.co/300x300/8c8c8c/e0e0e0?text=Album+A8", releaseDate: "2024-06-20" },
-    { id: 11, title: "Starfall Chronicles", artist: "Aurora Bloom", albumArt: "https://placehold.co/300x300/9d9d9d/e0e0e0?text=Album+A9", releaseDate: "2023-09-01" },
-];
-
-// Dummy data for all artists (for the AllArtistsPage view)
-const allArtistsData = [
-    { id: 1, name: "Aurora Bloom", genre: "Electronic, Ambient", profileImage: "https://placehold.co/200x200/1a1a1a/e0e0e0?text=Artist+1",
-      coverImage: "https://placehold.co/1200x400/333333/FFFFFF?text=Aurora+Bloom+Banner", bio: "Aurora Bloom crafts immersive soundscapes and evocative melodies that transport listeners to ethereal realms. Known for their intricate compositions and atmospheric textures, Aurora Bloom has quickly risen as a prominent figure in the ambient and electronic music scene, creating music that resonates deeply with the soul." },
-    { id: 2, name: "Lunar Drift", genre: "Synthwave", profileImage: "https://placehold.co/200x200/2a2a2a/e0e0e0?text=Artist+2",
-      coverImage: "https://placehold.co/1200x400/444444/DDDDDD?text=Lunar+Drift+Banner", bio: "Lunar Drift merges nostalgic 80s synth sounds with modern electronic beats, creating a unique and energetic sonic experience. Their music is perfect for night drives and retro-futuristic adventures." },
-    { id: 3, name: "Stellar Groove", genre: "Jazz Fusion", profileImage: "https://placehold.co/200x200/3a3a3a/e0e0e0?text=Artist+3",
-      coverImage: "https://placehold.co/1200x400/555555/EEEEEE?text=Stellar+Groove+Banner", bio: "Stellar Groove is a collective of virtuoso musicians blending intricate jazz harmonies with soulful funk rhythms. Their live performances are legendary for their improvisation and electrifying energy." },
-    { id: 4, name: "Neon Circuit", genre: "Cyberpunk", profileImage: "https://placehold.co/200x200/4a4a4a/e0e0e0?text=Artist+4",
-      coverImage: "https://placehold.co/1200x400/666666/DDDDDD?text=Neon+Circuit+Banner", bio: "Neon Circuit delivers raw, gritty cyberpunk anthems perfect for the dystopian future. Their sound is characterized by heavy synths, driving beats, and a dark, atmospheric vibe." },
-    { id: 5, name: "Whispering Sands", genre: "World Music", profileImage: "https://placehold.co/200x200/5a5a5a/e0e0e0?text=Artist+5",
-      coverImage: "https://placehold.co/1200x400/777777/AAAAAA?text=Whispering+Sands+Banner", bio: "Whispering Sands crafts enchanting world music infused with traditional instruments and modern production. Their melodies evoke images of ancient deserts and mystical lands." },
-    { id: 6, name: "Galactic Dreams", genre: "Orchestral", profileImage: "https://placehold.co/200x200/6a6a6a/e0e0e0?text=Artist+6",
-      coverImage: "https://placehold.co/1200x400/888888/BBBBBB?text=Galactic+Dreams+Banner", bio: "Galactic Dreams creates sweeping orchestral scores that inspire awe and wonder. Their compositions are often featured in sci-fi films and fantasy games, painting vast sonic landscapes." },
-    { id: 7, name: "Aqua Tones", genre: "Chillwave", profileImage: "https://placehold.co/200x200/7a7a7a/e0e0e0?text=Artist+7",
-      coverImage: "https://placehold.co/1200x400/999999/CCCCCC?text=Aqua+Tones+Banner", bio: "Aqua Tones offers a refreshing blend of chillwave and indie electronic, perfect for lazy summer days. Their tracks feature dreamy synths, gentle beats, and serene vocals." },
-    { id: 8, name: "Verdant Sound", genre: "Folk, Acoustic", profileImage: "https://placehold.co/200x200/8a8a8a/e0e0e0?text=Artist+8",
-      coverImage: "https://placehold.co/1200x400/AAAAAA/DDDDDD?text=Verdant+Sound+Banner", bio: "Verdant Sound delivers heartfelt folk and acoustic melodies rooted in nature. Their music is a journey through rustic landscapes and introspective moments." },
-    { id: 9, name: "Crimson Muse", genre: "Alternative Rock", profileImage: "https://placehold.co/200x200/9a9a9a/e0e0e0?text=Artist+9",
-      coverImage: "https://placehold.co/1200x400/BBBBBB/EEEEEE?text=Crimson+Muse+Banner", bio: "Crimson Muse pushes the boundaries of alternative rock with their raw energy and poetic lyrics. Their powerful performances captivating audiences worldwide." },
-    { id: 10, name: "Solar Flare", genre: "Progressive Trance", profileImage: "https://placehold.co/200x200/aaaaaa/e0e0e0?text=Artist+10",
-      coverImage: "https://placehold.co/1200x400/CCCCCC/FFFFFF?text=Solar+Flare+Banner", bio: "Solar Flare is at the forefront of progressive trance, known for their uplifting melodies and driving basslines. Their tracks are a staple in clubs and festivals." },
-];
+import { useOutletContext } from 'react-router-dom'; // Import useOutletContext
+import { useData } from './datacontext'; // Import useData hook
 
 function ArtistPage() {
+    // Get data from DataContext
+    const { songs, artists, albums } = useData();
+
+    // Get setCurrentPlayingSong from the Outlet context provided by LayoutWithNavbarAndPlayer in App.jsx
+    const { setCurrentPlayingSong } = useOutletContext();
+
     // State for the currently playing track and its play/pause state
     const [currentPlaying, setCurrentPlaying] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -66,7 +18,7 @@ function ArtistPage() {
     // New state to manage the current view: 'profile', 'allArtists', or 'albumSongs'
     const [view, setView] = useState('allArtists'); // Changed default view to 'allArtists'
     // State to hold the artist whose profile is currently being viewed in 'profile' or 'allArtistContent'
-    const [currentArtistInView, setCurrentArtistInView] = useState(defaultArtistData); // Initialize with default artistData
+    const [currentArtistInView, setCurrentArtistInView] = useState(null); // Initialize as null, will be set on selection
     // New state to hold the album selected for viewing songs
     const [selectedAlbumForSongs, setSelectedAlbumForSongs] = useState(null);
 
@@ -167,16 +119,17 @@ function ArtistPage() {
         };
     }, []);
 
-    // Handler for play/pause button
+    // Handler for play/pause button (for the mini-player's internal state)
     const handlePlayPause = () => {
         if (currentPlaying) {
             setIsPlaying(!isPlaying);
+            // In a real scenario, you'd also control the actual audio element here
         }
     };
 
     // Helper function to find the next item in a list (track or album)
     const getNextItem = (dataArray, currentItem) => {
-        if (!currentItem) return dataArray[0];
+        if (!currentItem || dataArray.length === 0) return dataArray[0];
         const currentIndex = dataArray.findIndex(item => item.id === currentItem.id);
         const nextIndex = (currentIndex + 1) % dataArray.length;
         return dataArray[nextIndex];
@@ -184,7 +137,7 @@ function ArtistPage() {
 
     // Helper function to find the previous item in a list (track or album)
     const getPreviousItem = (dataArray, currentItem) => {
-        if (!currentItem) return dataArray[dataArray.length - 1];
+        if (!currentItem || dataArray.length === 0) return dataArray[dataArray.length - 1];
         const currentIndex = dataArray.findIndex(item => item.id === currentItem.id);
         const prevIndex = (currentIndex - 1 + dataArray.length) % dataArray.length;
         return dataArray[prevIndex];
@@ -194,19 +147,22 @@ function ArtistPage() {
     const playNext = () => {
         let tracksToPlayFrom = [];
         if (view === 'albumSongs' && selectedAlbumForSongs) {
-            tracksToPlayFrom = allArtistTracks.filter(track => track.albumId === selectedAlbumForSongs.id);
-        } else if (view === 'profile') { // Now only 'profile' needs full artist tracks
-            tracksToPlayFrom = allArtistTracks.filter(track => track.artist === currentArtistInView.name);
-        } else { // 'allArtists' view
-            tracksToPlayFrom = allArtistTracks; // This might need more refined logic for global 'next' in allArtists view
+            tracksToPlayFrom = songs.filter(track => track.album === selectedAlbumForSongs.title && track.artist === selectedAlbumForSongs.artist);
+        } else if (view === 'profile' && currentArtistInView) {
+            tracksToPlayFrom = songs.filter(track => track.artist === currentArtistInView.name);
+        } else { // 'allArtists' view or fallback
+            tracksToPlayFrom = songs;
         }
 
         if (tracksToPlayFrom.length > 0) {
-            setCurrentPlaying(getNextItem(tracksToPlayFrom, currentPlaying));
+            const nextTrack = getNextItem(tracksToPlayFrom, currentPlaying);
+            setCurrentPlaying(nextTrack);
+            setCurrentPlayingSong(nextTrack); // Update global player
             setIsPlaying(true);
             setIsPlayerVisible(true);
         } else {
             setCurrentPlaying(null);
+            setCurrentPlayingSong(null);
             setIsPlaying(false);
             setIsPlayerVisible(false);
         }
@@ -216,19 +172,22 @@ function ArtistPage() {
     const playPrevious = () => {
         let tracksToPlayFrom = [];
         if (view === 'albumSongs' && selectedAlbumForSongs) {
-            tracksToPlayFrom = allArtistTracks.filter(track => track.albumId === selectedAlbumForSongs.id);
-        } else if (view === 'profile') { // Now only 'profile' needs full artist tracks
-            tracksToPlayFrom = allArtistTracks.filter(track => track.artist === currentArtistInView.name);
-        } else { // 'allArtists' view
-            tracksToPlayFrom = allArtistTracks; // This might need more refined logic for global 'previous' in allArtists view
+            tracksToPlayFrom = songs.filter(track => track.album === selectedAlbumForSongs.title && track.artist === selectedAlbumForSongs.artist);
+        } else if (view === 'profile' && currentArtistInView) {
+            tracksToPlayFrom = songs.filter(track => track.artist === currentArtistInView.name);
+        } else { // 'allArtists' view or fallback
+            tracksToPlayFrom = songs;
         }
 
         if (tracksToPlayFrom.length > 0) {
-            setCurrentPlaying(getPreviousItem(tracksToPlayFrom, currentPlaying));
+            const prevTrack = getPreviousItem(tracksToPlayFrom, currentPlaying);
+            setCurrentPlaying(prevTrack);
+            setCurrentPlayingSong(prevTrack); // Update global player
             setIsPlaying(true);
             setIsPlayerVisible(true);
         } else {
             setCurrentPlaying(null);
+            setCurrentPlayingSong(null);
             setIsPlaying(false);
             setIsPlayerVisible(false);
         }
@@ -236,7 +195,8 @@ function ArtistPage() {
 
     // Handler for clicking a track to play it
     const handleTrackClick = (track) => {
-        setCurrentPlaying(track);
+        setCurrentPlaying(track); // Set local state for mini-player
+        setCurrentPlayingSong(track); // Update global player state in App.jsx
         setIsPlaying(true);
         setIsPlayerVisible(true);
     };
@@ -246,18 +206,19 @@ function ArtistPage() {
         setSelectedAlbumForSongs(album);
         setView('albumSongs');
         // Optionally, set the first song of the album to play
-        const firstSong = allArtistTracks.find(song => song.albumId === album.id);
+        const firstSong = songs.find(song => song.album === album.title && song.artist === album.artist);
         if (firstSong) {
             setCurrentPlaying(firstSong);
+            setCurrentPlayingSong(firstSong); // Update global player
             setIsPlaying(true);
             setIsPlayerVisible(true);
         } else {
-            setCurrentPlaying(album); // Set to album if no songs for display in player
+            setCurrentPlaying(null); // Set to null if no songs for display in player
+            setCurrentPlayingSong(null);
             setIsPlaying(false);
             setIsPlayerVisible(false); // Hide player if no songs in album
         }
     };
-
 
     // Handler to toggle player visibility
     const togglePlayerVisibility = () => {
@@ -267,7 +228,9 @@ function ArtistPage() {
     // Handler to switch to the "All Artists" view (main entry point)
     const handleViewAllArtists = () => {
         setView('allArtists');
+        setCurrentArtistInView(null); // Clear selected artist
         setCurrentPlaying(null); // Clear currently playing when moving to general artist list
+        setCurrentPlayingSong(null);
         setIsPlaying(false);
         setIsPlayerVisible(false);
     };
@@ -279,10 +242,11 @@ function ArtistPage() {
             setSelectedAlbumForSongs(null);
         } else if (view === 'profile') {
             setView('allArtists'); // From artist profile, go back to all artists list
-            setCurrentArtistInView(defaultArtistData); // Reset to default artist for next time
+            setCurrentArtistInView(null); // Clear selected artist
         }
         // If view is 'allArtists', there's no back, as it's the initial page.
         setCurrentPlaying(null); // Clear mini-player content until a track is chosen
+        setCurrentPlayingSong(null);
         setIsPlaying(false);
         setIsPlayerVisible(false);
     };
@@ -292,10 +256,10 @@ function ArtistPage() {
         setCurrentArtistInView(artist); // Set the artist whose profile we want to see
         setView('profile'); // Go to the profile view of the selected artist
         setCurrentPlaying(null); // Clear mini-player content until a track is chosen
+        setCurrentPlayingSong(null);
         setIsPlaying(false);
         setIsPlayerVisible(false);
     };
-
 
     // Component for AllArtistsPage (nested for demonstration within a single immersive)
     const AllArtistsPageContent = () => {
@@ -305,7 +269,7 @@ function ArtistPage() {
                     All <span className="text-red-500">Artists</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 relative">
-                    {allArtistsData.map((artist, index) => (
+                    {artists.map((artist, index) => ( // Use artists from context
                         <div
                             key={artist.id}
                             className={`flex-shrink-0 w-48 bg-gray-900 p-4 rounded-xl shadow-xl border border-gray-700
@@ -330,7 +294,10 @@ function ArtistPage() {
 
     // Component for Album Songs View (nested for demonstration)
     const AlbumSongsViewContent = () => {
-        const songsInAlbum = allArtistTracks.filter(song => song.albumId === selectedAlbumForSongs?.id);
+        // Filter songs based on the selected album's title and artist
+        const songsInAlbum = songs.filter(song =>
+            selectedAlbumForSongs && song.album === selectedAlbumForSongs.title && song.artist === selectedAlbumForSongs.artist
+        );
 
         return (
             <div className="bg-gray-950 p-4 md:p-8 rounded-xl shadow-2xl animate-fadeInUp">
@@ -376,7 +343,7 @@ function ArtistPage() {
                                         <span className="text-gray-400 text-sm">{song.artist}</span>
                                     </div>
                                 </div>
-                                <span className="text-gray-500 text-sm">{song.releaseDate}</span>
+                                <span className="text-gray-500 text-sm">{song.views} views</span> {/* Use song.views if available */}
                             </div>
                         ))
                     ) : (
@@ -387,7 +354,6 @@ function ArtistPage() {
         );
     };
 
-
     return (
         // Main container for the artist page
         <div className={`bg-black text-white font-inter min-h-screen flex flex-col pt-16 ${isPlayerVisible && currentPlaying ? 'pb-24' : 'pb-8'}`}>
@@ -397,22 +363,20 @@ function ArtistPage() {
                     MUSIC<span className="text-white text-2xl">ALER</span>
                     <span className="text-gray-400 text-lg">
                         {view === 'allArtists' ? '' : // No text if viewing all artists
-                         view === 'profile' ? ` / ${currentArtistInView.name}` :
-                         view === 'albumSongs' ? ` / ${selectedAlbumForSongs?.title}` :
+                         view === 'profile' && currentArtistInView ? ` / ${currentArtistInView.name}` :
+                         view === 'albumSongs' && selectedAlbumForSongs ? ` / ${selectedAlbumForSongs?.title}` :
                          ''}
                     </span>
                 </div>
-                {/* Header now remains static, no dynamic back button here */}
             </header>
 
             {/* Main content area based on view state */}
             <section className="flex-grow py-8 px-4 md:px-8 lg:px-16 mt-8">
-
-                {view === 'profile' ? (
+                {view === 'profile' && currentArtistInView ? (
                     <>
-                        {/* Back button for Artist Profile, similar to Albums Page */}
+                        {/* Back button for Artist Profile */}
                         <button
-                            onClick={handleBack} // This handler goes back to All Artists
+                            onClick={handleBack}
                             className="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center mb-6 p-2 rounded-lg hover:bg-gray-800 active:scale-95"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -441,7 +405,10 @@ function ArtistPage() {
                                         {currentArtistInView.genre}
                                     </p>
                                     <button
-                                        onClick={() => handleTrackClick(allArtistTracks.find(t => t.artist === currentArtistInView.name) || allArtistTracks[0])} // Play first track by current artist, fallback to overall first
+                                        onClick={() => {
+                                            const artistSongs = songs.filter(t => t.artist === currentArtistInView.name);
+                                            if (artistSongs.length > 0) handleTrackClick(artistSongs[0]);
+                                        }}
                                         className="mt-4 bg-gradient-to-r from-red-600 to-pink-600 text-white px-8 py-3 rounded-full shadow-lg hover:from-red-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 text-md font-bold opacity-0 animate-fadeInUp animation-delay-300"
                                     >
                                         PLAY ALL
@@ -458,7 +425,10 @@ function ArtistPage() {
                                 </h2>
                             </div>
                             <div className="flex overflow-x-auto space-x-6 pb-4 horizontal-scroll-container relative">
-                                {allArtistTracks.slice(0, 6).filter(track => track.artist === currentArtistInView.name).map((track, index) => ( // Show first 6 popular tracks for current artist
+                                {songs.filter(track => track.artist === currentArtistInView.name)
+                                    .sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0)) // Sort by views
+                                    .slice(0, 6) // Show top 6 popular tracks for current artist
+                                    .map((track, index) => (
                                     <div
                                         key={track.id}
                                         className={`flex-shrink-0 w-48 bg-gray-900 p-4 rounded-xl shadow-xl border border-gray-700
@@ -474,7 +444,7 @@ function ArtistPage() {
                                         />
                                         <h3 className="text-lg font-bold text-white mb-1 truncate w-full">{track.title}</h3>
                                         <p className="text-sm text-gray-400 truncate w-full">{track.artist}</p>
-                                        <p className="text-xs text-gray-500 mt-2">Release: {track.releaseDate}</p>
+                                        <p className="text-xs text-gray-500 mt-2">Views: {track.views}</p>
                                     </div>
                                 ))}
                             </div>
@@ -486,8 +456,8 @@ function ArtistPage() {
                                 All <span className="text-red-500">Tracks</span> by {currentArtistInView.name}
                             </h2>
                             <div className="border-t border-gray-800 pt-6 mb-12 max-h-96 overflow-y-auto all-tracks-container">
-                                {allArtistTracks.filter(track => track.artist === currentArtistInView.name).length > 0 ? (
-                                    allArtistTracks.filter(track => track.artist === currentArtistInView.name).map((track, index) => (
+                                {songs.filter(track => track.artist === currentArtistInView.name).length > 0 ? (
+                                    songs.filter(track => track.artist === currentArtistInView.name).map((track, index) => (
                                         <div
                                             key={track.id}
                                             className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer group hover:shadow-md hover:scale-[1.01]"
@@ -500,7 +470,7 @@ function ArtistPage() {
                                                     <span className="text-gray-400 text-sm">{track.artist}</span>
                                                 </div>
                                             </div>
-                                            <span className="text-gray-500 text-sm">{track.releaseDate}</span>
+                                            <span className="text-gray-500 text-sm">Views: {track.views}</span>
                                         </div>
                                     ))
                                 ) : (
@@ -508,7 +478,6 @@ function ArtistPage() {
                                 )}
                             </div>
                         </section>
-
 
                         {/* Albums by Artist Section */}
                         <section className="py-12 px-4 md:px-8 lg:px-16">
@@ -518,7 +487,7 @@ function ArtistPage() {
                                 </h2>
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 relative">
-                                {artistAlbums.filter(album => album.artist === currentArtistInView.name).map((album, index) => (
+                                {albums.filter(album => album.artist === currentArtistInView.name).map((album, index) => ( // Use albums from context
                                     <div
                                         key={album.id}
                                         className={`bg-gray-900 p-4 rounded-xl shadow-xl border border-gray-700
@@ -616,10 +585,7 @@ function ArtistPage() {
                     </button>
                 </div>
             )}
-             {/* Bottom Copyright Bar - Adjusted to take w-full */}
-            
         </div>
-        
     );
 }
 
